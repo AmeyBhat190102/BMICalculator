@@ -1,0 +1,307 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>BMI Calculator</title>
+  <style>
+    /* CSS styles */
+* {
+  box-sizing: border-box;
+}
+
+body {
+  font-family: Arial, sans-serif;
+  margin: 0;
+  padding: 0;
+  background-color: #f5f5f5;
+}
+
+.container {
+  max-width: 400px;
+  margin: 0 auto;
+  padding: 20px;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100vh;
+  background-color: #fff;
+  border-radius: 10px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+}
+
+h1 {
+  margin-bottom: 20px;
+  color: #333;
+}
+
+.input-group {
+  display: flex;
+  align-items: center;
+  margin-bottom: 10px;
+}
+
+.input-group label {
+  margin-right: 10px;
+  color: #555;
+}
+
+.input-group input[type="text"] {
+  width: 100%;
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+}
+
+.select-wrapper {
+  position: relative;
+  width: 70px;
+}
+
+.select-wrapper::after {
+  content: "\25BE";
+  position: absolute;
+  top: 50%;
+  right: 10px;
+  transform: translateY(-50%);
+  color: #888;
+  pointer-events: none;
+}
+
+.select-wrapper select {
+  appearance: none;
+  background-color: transparent;
+  border: none;
+  font-size: 14px;
+  padding: 5px 20px 5px 10px;
+  width: 100%;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+}
+
+.calculate-btn {
+  background-color: #007bff;
+  color: #fff;
+  border: none;
+  padding: 10px 20px;
+  font-size: 16px;
+  font-weight: bold;
+  text-transform: uppercase;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.calculate-btn:hover {
+  background-color: #0056b3;
+}
+
+.result {
+  margin-top: 20px;
+  font-weight: bold;
+  color: #333;
+}
+
+.bmi-category {
+  margin-top: 10px;
+  color: #555;
+}
+
+.recommendations {
+  margin-top: 20px;
+  text-align: left;
+  color: #555;
+}
+
+.error-message {
+  color: red;
+  margin-top: 10px;
+}
+
+/* Animations */
+@keyframes fadeIn {
+  0% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 1;
+  }
+}
+
+@keyframes scaleIn {
+  0% {
+    transform: scale(0);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+.container {
+  animation: fadeIn 0.5s ease;
+}
+
+.result,
+.bmi-category,
+.recommendations,
+.error-message {
+  animation: scaleIn 0.5s ease;
+}
+
+@media (max-width: 480px) {
+  .container {
+    padding: 10px;
+  }
+
+  .input-group {
+    flex-direction: column;
+    align-items: flex-start;
+    margin-bottom: 15px;
+  }
+}
+
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>BMI Calculator</h1>
+    <div class="input-group">
+      <label for="weightInput">Weight:</label>
+      <input id="weightInput" type="text" placeholder="Enter weight">
+      <select id="weightUnit">
+        <option value="kg">kg</option>
+        <option value="lb">lb</option>
+      </select>
+    </div>
+    <div class="input-group">
+      <label for="heightInput">Height:</label>
+      <input id="heightInput" type="text" placeholder="Enter height">
+      <select id="heightUnit">
+        <option value="cm">cm</option>
+        <option value="in">in</option>
+      </select>
+    </div>
+    <button id="calculateBtn">Calculate BMI</button>
+    <div class="result"></div>
+    <div class="bmi-category"></div>
+    <div class="recommendations"></div>
+    <div class="error-message"></div>
+    <div class="footer">
+        <p>Made By Amey Bhat</p>
+        <p>Some JavaScript Projects</p>
+    </div>
+  </div>
+
+  <script>
+    document.addEventListener("DOMContentLoaded", function() {
+      const weightInput = document.getElementById("weightInput");
+      const heightInput = document.getElementById("heightInput");
+      const weightUnitSelect = document.getElementById("weightUnit");
+      const heightUnitSelect = document.getElementById("heightUnit");
+      const calculateBtn = document.getElementById("calculateBtn");
+      const resultDiv = document.querySelector(".result");
+      const bmiCategoryDiv = document.querySelector(".bmi-category");
+      const recommendationsDiv = document.querySelector(".recommendations");
+      const errorMessageDiv = document.querySelector(".error-message");
+
+      function calculateBMI() {
+        const weight = parseFloat(weightInput.value);
+        const height = parseFloat(heightInput.value);
+
+        if (isNaN(weight) || isNaN(height) || weight <= 0 || height <= 0) {
+          resultDiv.textContent = "";
+          bmiCategoryDiv.textContent = "";
+          recommendationsDiv.textContent = "";
+          errorMessageDiv.textContent = "Please enter valid weight and height values.";
+          return;
+        }
+
+        const weightUnit = weightUnitSelect.value;
+        const heightUnit = heightUnitSelect.value;
+        const bmi = calculateBMIValue(weight, height, weightUnit, heightUnit);
+        
+        resultDiv.textContent = `Your BMI is ${bmi.toFixed(2)}.`;
+        displayBMICategory(bmi);
+        displayRecommendations(bmi);
+        errorMessageDiv.textContent = "";
+      }
+
+      function calculateBMIValue(weight, height, weightUnit, heightUnit) {
+        if (weightUnit === "lb") {
+          weight = weight / 2.20462; // Convert pounds to kilograms
+        }
+        if (heightUnit === "in") {
+          height = height * 0.0254; // Convert inches to meters
+        }
+        else{
+            height = height/100 //Convert cms to meters
+        }
+        return weight / (height * height);
+      }
+
+      function displayBMICategory(bmi) {
+        let category = "";
+        if (bmi < 18.5) {
+          category = "Underweight";
+        } else if (bmi >= 18.5 && bmi < 25) {
+          category = "Normal weight";
+        } else if (bmi >= 25 && bmi < 30) {
+          category = "Overweight";
+        } else {
+          category = "Obese";
+        }
+        bmiCategoryDiv.textContent = `Category: ${category}`;
+      }
+
+      function displayRecommendations(bmi) {
+        recommendationsDiv.innerHTML = "";
+        if (bmi < 18.5) {
+          recommendationsDiv.innerHTML = `
+            <p>Recommendations:</p>
+            <ul>
+              <li>Eat a balanced diet with sufficient calories.</li>
+              <li>Incorporate strength training exercises to build muscle mass.</li>
+              <li>Consult a healthcare professional for personalized advice.</li>
+              <li>Consider working with a registered dietitian to develop a meal plan.</li>
+              <li>Gradually increase calorie intake to promote weight gain.</li>
+            </ul>
+          `;
+        } else if (bmi >= 18.5 && bmi < 25) {
+          recommendationsDiv.innerHTML = `
+            <p>Recommendations:</p>
+            <ul>
+              <li>Maintain a balanced diet with a variety of nutritious foods.</li>
+              <li>Engage in regular physical activity for overall health.</li>
+              <li>Monitor your weight and make adjustments if necessary.</li>
+              <li>Continue to prioritize healthy lifestyle habits.</li>
+            </ul>
+          `;
+        } else if (bmi >= 25 && bmi < 30) {
+          recommendationsDiv.innerHTML = `
+            <p>Recommendations:</p>
+            <ul>
+              <li>Focus on portion control and mindful eating.</li>
+              <li>Incorporate regular aerobic exercise and strength training.</li>
+              <li>Seek support from a healthcare professional or a registered dietitian.</li>
+              <li>Consider participating in weight management programs or support groups.</li>
+            </ul>
+          `;
+        } else {
+          recommendationsDiv.innerHTML = `
+            <p>Recommendations:</p>
+            <ul>
+              <li>Consult a healthcare professional for evaluation and guidance.</li>
+              <li>Follow a comprehensive weight loss plan developed by a professional.</li>
+              <li>Focus on sustainable lifestyle changes rather than quick fixes.</li>
+              <li>Incorporate regular physical activity and monitor progress over time.</li>
+              <li>Consider joining weight management programs or seeking support groups.</li>
+            </ul>
+          `;
+        }
+      }
+
+      calculateBtn.addEventListener("click", calculateBMI);
+    });
+  </script>
+</body>
+</html>
