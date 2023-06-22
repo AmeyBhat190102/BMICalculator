@@ -1,6 +1,9 @@
 # BMICalculator
 This Is A Simple Javascript Project That is used to Calculate the BMI of An Individual And Give Recomendations As Well
 
+# Deployment Link : https://ameybhat190102.github.io/BMICalculator/
+
+
 # BMI Calculator
 
 BMI Calculator is a web application that allows you to calculate your Body Mass Index (BMI) based on your weight and height. It provides you with an indication of whether you are underweight, normal weight, overweight, or obese, according to the BMI categories.
